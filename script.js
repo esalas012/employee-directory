@@ -48,8 +48,11 @@ function createCard(){
 	const location = document.createElement("p");
 	location.className = "card-text cap";
 	cardInfoContainer.appendChild(location);
-
-
-
 }
 
+
+function createModal(){
+	const modalContainer = document.createElement("div");
+	modalContainer.className("modal-container");
+
+}
