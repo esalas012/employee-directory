@@ -1,14 +1,10 @@
 
-
-
-fetch("https://randomuser.me/api/?results=12")
+const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 	.then(response => response.json())
 	.then(data => {
 		const employees = data.results;
-		console.log(employees);
 		createSearchBar();
 		for(let i = 0; i<employees.length; i++){
-			console.log(employees[i].name.first);
 			createCard();
 			const imgs = document.querySelectorAll(".card-img");
 			const names = document.querySelectorAll(".card-name");
@@ -18,19 +14,78 @@ fetch("https://randomuser.me/api/?results=12")
 			names[i].innerText = employees[i].name.first + " " + employees[i].name.last;
 			emails[i].innerText = employees[i].email;
 			locations[i].innerText = employees[i].location.city + ", " + employees[i].location.state;
-			
 		}
+		for(let i = 0; i<employees.length; i++){
+			showModal(employees[i]);
+		}
+		document.querySelectorAll(".modal-container").forEach((modal)=>{
+				modal.style.display = "none";
+		})
+		const modalContainers = document.querySelectorAll(".modal-container");
 		document.querySelectorAll(".card").forEach((card)=>{
-			card.addEventListener("click", (e)=>{
-				for(let i = 0; i<employees.length; i++){
-					const name = card.children[1].querySelector("#name").innerText;
-					if(name.toLowerCase() === (employees[i].name.first + " " + employees[i].name.last)){
-						createModal(employees[i]);
+			card.addEventListener("click",()=>{
+				const name = card.querySelector("#name").innerText;
+				modalContainers.forEach((modal)=>{
+					if(name.toLowerCase() === (modal.querySelector("#name").innerText.toLowerCase())){
+					modal.style.display = "";
+					}
+				});
+			})
+		})
+
+		modalContainers.forEach((modal)=>{
+			console.log(modal);
+			modal.addEventListener("click", (e)=>{
+				if(e.target.innerText === "X"){
+						modal.style.display = "none";
+				}
+				const prev = document.querySelector("#modal-prev");
+				const next = document.querySelector("#modal-next");
+				if(e.target.innerText === "PREV"){
+					if(modal.previousElementSibling.className === "modal-container"){
+						modal.style.display = "none";
+						modal.previousElementSibling.style.display = "";
+					}
+				}
+				if(e.target.innerText === "NEXT"){
+					if(modal.nextElementSibling.className === "modal-container"){
+						modal.style.display = "none";
+						modal.nextElementSibling.style.display = "";
 					}
 				}
 			});
-		})
+		});
+		const input = document.querySelector("#search-input");
+		const cards = document.querySelectorAll(".card");
+		input.addEventListener("keyup", (e)=>{
+			cards.forEach((card)=>{
+				let name = card.querySelector("#name").innerText.toLowerCase();		
+				if(name.indexOf(input.value.toLowerCase()) > -1){
+					card.style.display = "";
+				}else{
+					card.style.display = "none";
+
+				}
+			});
+		});
+	})
+
+
+	.then(data =>{
+		
 	});
+	
+
+// function noResults(){
+//   const gallery = document.querySelector("#gallery");
+//   let message = document.createElement("div");
+//   message.className = "message";
+//   message.innerText = "No Results";
+//   message.style.textAlign = "center";
+//   gallery.appendChild(message);
+
+// }
+
 
 function createCard(){
 	const card = document.createElement("div");
@@ -85,7 +140,7 @@ function createSearchBar(){
 
 }
 
-function createModal(employee){
+function showModal(employee){
 	const gallery = document.querySelector(".gallery");
 
 	const modalContainer = document.createElement("div");
@@ -148,5 +203,23 @@ function createModal(employee){
 	const year = dateTime.getFullYear();
 	birthday.innerText= `Birthday: ${month}/${date}/${year}`;
 	modalInfoContainer.appendChild(birthday);
+
+	const btnContainer = document.createElement("div");
+	btnContainer.className = "modal-btn-container";
+	modalContainer.appendChild(btnContainer);
+
+	const prev = document.createElement("button");
+	prev.type = "button";
+	prev.id = "modal-prev";
+	prev.className = "modal-prev btn";
+	prev.innerText = "Prev";
+	btnContainer.appendChild(prev);
+
+	const next = document.createElement("button");
+	next.type = "button";
+	next.id = "modal-next";
+	next.className = "modal-next btn";
+	next.innerText = "Next";
+	btnContainer.appendChild(next);
 
 }
