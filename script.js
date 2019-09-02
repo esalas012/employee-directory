@@ -4,16 +4,15 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 	.then(data => {
 		const employees = data.results;
 		createSearchBar();
+/**
+* Adds data from API to the field cards.
+**/
 		for(let i = 0; i<employees.length; i++){
 			createCard();
-			const imgs = document.querySelectorAll(".card-img");
-			const names = document.querySelectorAll(".card-name");
-			const emails = document.querySelectorAll("p:not(.cap)");
-			const locations = document.querySelectorAll("p.cap");
-			imgs[i].src = employees[i].picture.large;
-			names[i].innerText = employees[i].name.first + " " + employees[i].name.last;
-			emails[i].innerText = employees[i].email;
-			locations[i].innerText = employees[i].location.city + ", " + employees[i].location.state;
+			document.querySelectorAll(".card-img")[i].src = employees[i].picture.large;
+			document.querySelectorAll(".card-name")[i].innerText = employees[i].name.first + " " + employees[i].name.last;
+			document.querySelectorAll("p:not(.cap)")[i].innerText = employees[i].email;
+			document.querySelectorAll("p.cap")[i].innerText = employees[i].location.city + ", " + employees[i].location.state;
 		}
 		for(let i = 0; i<employees.length; i++){
 			createModal(employees[i]);
@@ -21,30 +20,32 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 		document.querySelectorAll(".modal-container").forEach((modal)=>{
 				modal.style.display = "none";
 		})
-
+/**
+* Displays proper modal when a card is clicked.
+**/
 		const modalContainers = document.querySelectorAll(".modal-container");
 		document.querySelectorAll(".card").forEach((card)=>{
 			card.addEventListener("click",()=>{
 				const name = card.querySelector("#name").innerText;
 				const email = card.querySelector("#email").innerText;
 				modalContainers.forEach((modal)=>{
-					if(isModalActive && name.toLowerCase() === (modal.querySelector("#name").innerText.toLowerCase()) && email === modal.querySelector("#email").innerText){
+					if(name.toLowerCase() === (modal.querySelector("#name").innerText.toLowerCase()) && email === modal.querySelector("#email").innerText){
 					modal.style.display = "";
 					}
 				});
 			})
 		})
-
+/**
+*Adds functionality to the X, next, prev buttons inside the modal.
+**/
 		modalContainers.forEach((modal)=>{
-			const cards = document.querySelectorAll(".card");
 			modal.addEventListener("click", (e)=>{
 				if(e.target.innerText === "X"){
-						modal.style.display = "none";
+					modal.style.display = "none";
 				}
 				const prev = document.querySelector("#modal-prev");
 				const next = document.querySelector("#modal-next");
-				if(e.target.innerText === "PREV"){
-					
+				if(e.target.innerText === "PREV"){		
 					if(modal.previousElementSibling.className === "modal-container"){
 						modal.style.display = "none";
 						modal.previousElementSibling.style.display = "";
@@ -59,80 +60,38 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 			});
 	
 		});
+/**
+*the search function gets called when the submit button is clicked or when there there is a change
+*in the input value.
+**/
 		document.querySelector("#search-submit").addEventListener("click", ()=>{
-			search(employees);
+			const input = document.querySelector("#search-input");
+			if(input.value.length !== 0){
+				search(employees);
+			}
 		});
 		document.querySelector("#search-input").addEventListener("keyup", ()=>{
 			search(employees);
 		});
 	});
-
-// function noResults(){
-//   const gallery = document.querySelector("#gallery");
-//   let message = document.createElement("div");
-//   message.className = "message";
-//   message.innerText = "No Results";
-//   message.style.textAlign = "center";
-//   gallery.appendChild(message);
-
-// }
-
-
-
-//***************************************
-// const modals = document.querySelectorAll(".modal-container");
+/**
+*Searches through the cards and looks for a card matching the input value. If there is one, it displays
+*it on the screen.
+**/
 function search(employees){
 	const input = document.querySelector("#search-input");
 	const cards = document.querySelectorAll(".card");
-	// const cardsShown = [];
-	// let cardsHidden = [];
 	cards.forEach((card)=>{
 		const cardName = card.querySelector("#name").innerText.toLowerCase();		
 		if(cardName.indexOf(input.value.toLowerCase()) > -1){
 			card.style.display = "";
-			// if(!cardsShown.includes(card)){
-			// 	cardsShown.push(card);
-			// 	if(cardsHidden.includes(card)){
-			// 		cardsHidden = cardsHidden.filter((c)=> c !== card);
-			// 	}
-			// }
 		}else{
-			card.style.display = "none";
-			// if(!cardsHidden.includes(card)){
-			// 	cardsHidden.push(card);
-			// }
-			
+			card.style.display = "none";	
 		}
 	});
-	// modals.forEach((modal)=>{
-	// 	const modalName = modal.querySelector("#name").innerText.toLowerCase();
-	// 	cardsShown.forEach((card)=>{
-	// 		if(card.querySelector("#name").innerText.toLowerCase() === modalName){
-	// 			for(let i=0;i<employees.length;i++){
-	// 				if((employees[i].name.first + " " + employees[i].name.last).toLowerCase() === modalName){
-	// 					console.log("1");
-	// 					// createModal(employees[i]);
-	// 					// modal.style.display = "none";
-
-	// 				}
-	// 			}
-	// 		}
-
-	// 	})
-	// 	cardsHidden.forEach((card)=>{
-	// 		if(card.querySelector("#name").innerText.toLowerCase() === modalName){
-	// 			modal.remove();
-	// 		}
-
-	// 	})
-	// })
-
 }
-
-//*****************************
-
 /**
-*Creates card for each element in the page
+*Creates card for each element in the page. Each card contains a field for name, email and location
 **/
 function createCard(){
 	const card = document.createElement("div");
@@ -191,7 +150,8 @@ function createSearchBar(){
 }
 
 /**
-*Creates modal-container and all its children and appends them to the DOM
+* Creates modal-container and all its children and appends them to the DOM. Modal
+* contains fields for name,email, state, phone, address and birthday
 **/
 function createModal(employee){
 	const gallery = document.querySelector(".gallery");
