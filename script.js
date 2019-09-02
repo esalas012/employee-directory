@@ -16,17 +16,19 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 			locations[i].innerText = employees[i].location.city + ", " + employees[i].location.state;
 		}
 		for(let i = 0; i<employees.length; i++){
-			showModal(employees[i]);
+			createModal(employees[i]);
 		}
 		document.querySelectorAll(".modal-container").forEach((modal)=>{
 				modal.style.display = "none";
 		})
+
 		const modalContainers = document.querySelectorAll(".modal-container");
 		document.querySelectorAll(".card").forEach((card)=>{
 			card.addEventListener("click",()=>{
 				const name = card.querySelector("#name").innerText;
+				const email = card.querySelector("#email").innerText;
 				modalContainers.forEach((modal)=>{
-					if(name.toLowerCase() === (modal.querySelector("#name").innerText.toLowerCase())){
+					if(isModalActive && name.toLowerCase() === (modal.querySelector("#name").innerText.toLowerCase()) && email === modal.querySelector("#email").innerText){
 					modal.style.display = "";
 					}
 				});
@@ -34,7 +36,7 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 		})
 
 		modalContainers.forEach((modal)=>{
-			console.log(modal);
+			const cards = document.querySelectorAll(".card");
 			modal.addEventListener("click", (e)=>{
 				if(e.target.innerText === "X"){
 						modal.style.display = "none";
@@ -42,39 +44,28 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 				const prev = document.querySelector("#modal-prev");
 				const next = document.querySelector("#modal-next");
 				if(e.target.innerText === "PREV"){
+					
 					if(modal.previousElementSibling.className === "modal-container"){
 						modal.style.display = "none";
 						modal.previousElementSibling.style.display = "";
 					}
 				}
 				if(e.target.innerText === "NEXT"){
-					if(modal.nextElementSibling.className === "modal-container"){
+					if(modal.nextElementSibling){
 						modal.style.display = "none";
 						modal.nextElementSibling.style.display = "";
-					}
+					}	
 				}
 			});
-		});
-		const input = document.querySelector("#search-input");
-		const cards = document.querySelectorAll(".card");
-		input.addEventListener("keyup", (e)=>{
-			cards.forEach((card)=>{
-				let name = card.querySelector("#name").innerText.toLowerCase();		
-				if(name.indexOf(input.value.toLowerCase()) > -1){
-					card.style.display = "";
-				}else{
-					card.style.display = "none";
-
-				}
-			});
-		});
-	})
-
-
-	.then(data =>{
-		
-	});
 	
+		});
+		document.querySelector("#search-submit").addEventListener("click", ()=>{
+			search(employees);
+		});
+		document.querySelector("#search-input").addEventListener("keyup", ()=>{
+			search(employees);
+		});
+	});
 
 // function noResults(){
 //   const gallery = document.querySelector("#gallery");
@@ -87,6 +78,62 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 // }
 
 
+
+//***************************************
+// const modals = document.querySelectorAll(".modal-container");
+function search(employees){
+	const input = document.querySelector("#search-input");
+	const cards = document.querySelectorAll(".card");
+	// const cardsShown = [];
+	// let cardsHidden = [];
+	cards.forEach((card)=>{
+		const cardName = card.querySelector("#name").innerText.toLowerCase();		
+		if(cardName.indexOf(input.value.toLowerCase()) > -1){
+			card.style.display = "";
+			// if(!cardsShown.includes(card)){
+			// 	cardsShown.push(card);
+			// 	if(cardsHidden.includes(card)){
+			// 		cardsHidden = cardsHidden.filter((c)=> c !== card);
+			// 	}
+			// }
+		}else{
+			card.style.display = "none";
+			// if(!cardsHidden.includes(card)){
+			// 	cardsHidden.push(card);
+			// }
+			
+		}
+	});
+	// modals.forEach((modal)=>{
+	// 	const modalName = modal.querySelector("#name").innerText.toLowerCase();
+	// 	cardsShown.forEach((card)=>{
+	// 		if(card.querySelector("#name").innerText.toLowerCase() === modalName){
+	// 			for(let i=0;i<employees.length;i++){
+	// 				if((employees[i].name.first + " " + employees[i].name.last).toLowerCase() === modalName){
+	// 					console.log("1");
+	// 					// createModal(employees[i]);
+	// 					// modal.style.display = "none";
+
+	// 				}
+	// 			}
+	// 		}
+
+	// 	})
+	// 	cardsHidden.forEach((card)=>{
+	// 		if(card.querySelector("#name").innerText.toLowerCase() === modalName){
+	// 			modal.remove();
+	// 		}
+
+	// 	})
+	// })
+
+}
+
+//*****************************
+
+/**
+*Creates card for each element in the page
+**/
 function createCard(){
 	const card = document.createElement("div");
 	card.className = "card";
@@ -110,6 +157,7 @@ function createCard(){
 	cardInfoContainer.appendChild(name);
 
 	const email = document.createElement("p");
+	email.id = "email";
 	email.className = "card-text";
 	cardInfoContainer.appendChild(email);
 
@@ -118,6 +166,9 @@ function createCard(){
 	cardInfoContainer.appendChild(location);
 }
 
+/**
+*Creates search bar
+**/
 function createSearchBar(){
 	const form = document.createElement("form");
 	form.action = "#";
@@ -137,10 +188,12 @@ function createSearchBar(){
 	submit.className = "search-submit";
 	submit.style.margin = "2px";
 	form.appendChild(submit);
-
 }
 
-function showModal(employee){
+/**
+*Creates modal-container and all its children and appends them to the DOM
+**/
+function createModal(employee){
 	const gallery = document.querySelector(".gallery");
 
 	const modalContainer = document.createElement("div");
@@ -176,6 +229,7 @@ function showModal(employee){
 
 	const email = document.createElement("p");
 	email.className="modal-text";
+	email.id = "email";
 	email.innerText= employee.email;
 	modalInfoContainer.appendChild(email);
 
@@ -221,5 +275,4 @@ function showModal(employee){
 	next.className = "modal-next btn";
 	next.innerText = "Next";
 	btnContainer.appendChild(next);
-
 }
