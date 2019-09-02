@@ -66,13 +66,14 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 **/
 		document.querySelector("#search-submit").addEventListener("click", ()=>{
 			const input = document.querySelector("#search-input");
-			if(input.value.length !== 0){
-				search(employees);
-			}
+			search(employees);
+
 		});
-		document.querySelector("#search-input").addEventListener("keyup", ()=>{
+		document.querySelector("#search-input").addEventListener("input", ()=>{
 			search(employees);
 		});
+		
+		
 	});
 /**
 *Searches through the cards and looks for a card matching the input value. If there is one, it displays
