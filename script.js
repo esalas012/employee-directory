@@ -71,10 +71,8 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 		});
 		document.querySelector("#search-input").addEventListener("input", ()=>{
 			search(employees);
-		});
-		
-		
-	});
+		});	
+	}).catch(err=>console.log(err));
 /**
 *Searches through the cards and looks for a card matching the input value. If there is one, it displays
 *it on the screen.
@@ -214,7 +212,7 @@ function createModal(employee){
 	birthday.className="modal-text";
 	const dateTime = new Date(employee.dob.date);
 	const date = dateTime.getDate();
-	const month = dateTime.getMonth();
+	const month = dateTime.getMonth() + 1;
 	const year = dateTime.getFullYear();
 	birthday.innerText= `Birthday: ${month}/${date}/${year}`;
 	modalInfoContainer.appendChild(birthday);
