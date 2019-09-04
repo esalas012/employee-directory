@@ -64,8 +64,8 @@ const results = fetch("https://randomuser.me/api/?results=12&nat=us,gb")
 *the search function gets called when the submit button is clicked or when there there is a change
 *in the input value.
 **/
-		document.querySelector("#search-submit").addEventListener("click", ()=>{
-			const input = document.querySelector("#search-input");
+		document.querySelector("#search-submit").addEventListener("click", (e)=>{
+			e.preventDefault();
 			search(employees);
 
 		});
